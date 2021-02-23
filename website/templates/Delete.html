@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Suppression{% endblock %}
+
+{% block content %}
+  <main>
+    <h1>Suppression de tâches/rdv</h1>
+
+    <article>
+      <form method="post" id="form">
+        <ul class="list">
+          {% if tasks.count() != 0 %}
+          <h2>Tâches</h2>
+          {% endif %}
+            {% for tsk in tasks %}
+              <ul class= {% if tsk.state %} "lab done" {% else %} "lab not_done" {% endif %} >
+                <label class="red_font">
+                <input type="checkbox" id={{"Task-"+tsk.id|string}} name={{"Task-"+tsk.id|string}}
+                       {% if tsk.to_delete %}checked{% endif %}>
+                  {{ tsk.context }}
+                </label>
+                <label class="tps" for={{"Task-"+tsk.id|string}}>
+                dans
+                {% set tseconds = (tsk.date - now).total_seconds()|int %}
+                {% set seconds = tseconds%60 %}
+                {% set minutes = tseconds%3600//60 %}
+                {% set hours = tseconds//3600 %}
+                {% set days = tseconds//86400 %}
+                {% set month = (tsk.date.month - now.month)|int %}
+                {% set year = (tsk.date.year - now.year)|int %}
+
+                {% if hours<=24 %}
+                {% if hours!=0 %}{{ hours|string + "h " }}{% endif %}
+                {% if minutes!=0 %}{{ minutes|string + "min " }}{% endif %}
+                {{ seconds|string + "s" }}
+                {% elif days <= 31 %}
+                {{ days|string + " jours" }}
+                {% else %}
+                {% if (tsk.date.year - now.year)|int != 0 %}
+                {{ (tsk.date.year - now.year)|int|string + " ans" }}
+                {% else %}
+                {{ (tsk.date.month - now.month)|int|string + " mois" }}
+                {% endif %}
+                {% endif %}
+
+                </label>
+                <label class="date" for={{"Task-"+tsk.id|string}}>
+                  {{ "Crée le "+tsk.date_now|string }}
+                </label>
+              </ul>
+            {% endfor %}
+        </ul>
+
+
+        <ul class="list">
+          {% if rdv.count() != 0 %}
+          <h2>Rdv</h2>
+          {% endif %}
+          {% for rd in rdv %}
+            <ul class= {% if rd.state %} "lab done" {% else %} "lab not_done" {% endif %} >
+                <label class="red_font">
+                <input type="checkbox" id={{"Rdv-"+rd.id|string}} name={{"Rdv-"+rd.id|string}}
+                       {% if rd.to_delete %}checked{% endif %}>
+                {{ rd.context }}
+                </label>
+
+                <label class="tps" for={{"Rdv-"+rd.id|string}}>
+                {% set tseconds = (rd.date - now).total_seconds()|int %}
+                {% set days = tseconds//86400 %}
+                {% if days|string == 0 %}à {{ rd.date.hour|string + ":" + rd.date.minute|string }}
+                {% elif days|string == 1 %}demain à {{ rd.date.hour|string + ":" + rd.date.minute|string }}
+                {% elif rd.date.weekday()|int > now.weekday|int and days|int<=7 %}{{ days_name[rd.date.weekday()|int] + " à " + rd.date.hour|string + ":" + rd.date.minute|string }}
+                {% elif rd.date.year|int==now.year|int %}{{ "le " + rd.date.day|string + " " + month_name[rd.date.month|int] }}
+                {% else %}{{ " en " + month_name[rd.date.month|int] + " " + rd.date.year|string }}
+                {% endif %}
+              </label>
+
+                <label class="date" for={{"Rdv-"+rd.id|string}}>
+                {{ "Crée le "+rd.date_now|string }}
+                </label>
+              </ul>
+          {% endfor %}
+        </ul>
+        <ul class="list">
+          {% if repet.count() != 0 %}
+          <h2>Tache Répétitives</h2>
+          {% endif %}
+          {% for rep in repet %}
+            <ul class= {% if rep.state %} "lab done" {% else %} "lab not_done" {% endif %} >
+                <label class="red_font">
+                  <input type="checkbox" id={{"Repet-"+rep.id|string}} name={{"Repet-"+rep.id|string}}
+                         {% if rep.to_delete %}checked{% endif %}>
+                    {{ rep.context }}
+                </label>
+                <label class="tps" for={{"Repet-"+rep.id|string}}>
+
+                {% set tday = rep.day - now.weekday() %}
+                {% if tday<0 %}{% set tday = rep.day + (now.weekday()+1) %}{% endif %}
+                  {% if tday==0 %}aujourd'hui{% elif tday==1 %}demain{% else %}dans {{ tday }} jour(s){% endif %}
+
+                </label>
+                <label class="date" for={{"Repet-"+rep.id|string}}>
+                  {{ "Crée le "+rep.date_now|string }}
+                </label>
+              </ul>
+          {% endfor %}
+        </ul>
+      </form>
+    </article>
+    <article>
+      <a href="..">Acceuil</a>
+      <button type="submit" class="red_font" style="font-weight: bold" form="form">Delete</button>
+    </article>
+
+  </main>
+{% endblock %}

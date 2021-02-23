@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Tâches{% endblock %}
+
+{% block content %}
+  <main>
+    <h1>Tâches</h1>
+
+    <article>
+      <form method="post" id="form">
+        <label>
+          <input name="context" placeholder="----------Tâche----------" autofocus required>
+           Pour le
+          <select id="day" name="day">
+            {% for day in range(31) %}
+              <option value={{day+1}} {% if day+1==now.day %}selected{% endif %}
+              >{{day+1}}</option>
+            {% endfor %}
+          </select>
+          <select id="month" name="month">
+            {% for month in range(12) %}
+              <option value={{month+1}} {% if month+1==now.month %}selected{% endif %}
+              >{{ month_name[month] }}</option>
+            {% endfor %}
+          </select>
+          <select id="year" name="year">
+            {% for year in range(now.year-1, now.year+9) %}
+              <option value={{year+1}} {% if year+1==now.year %}selected{% endif %}
+              >{{ year+1 }}</option>
+            {% endfor %}
+          </select>
+          à
+          <select id="hour" name="hour">
+            {% for hour in range(24) %}
+              <option value={{hour+1}} {% if hour+1==now.hour %}selected{% endif %}
+              >{{hour+1}}</option>
+            {% endfor %}
+          </select>
+          :
+          <select id="minute" name="minute">
+            {% for minute in range(60) %}
+              <option value={{minute+1}} {% if minute+1==now.minute %}selected{% endif %}
+              >{{minute+1}}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </form>
+      <button type="submit" form="form" form>Submit</button>
+    </article>
+
+  </main>
+{% endblock %}

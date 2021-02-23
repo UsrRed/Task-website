@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Répétition{% endblock %}
+
+{% block content %}
+  <main>
+    <h1>Répétitions</h1>
+
+    <article>
+      <form method="post" id="form">
+        <label>
+          <input name="context" placeholder="------Rendez-vous------" autofocus required>
+           Pour les
+          <select id="day" name="day">
+            {% for day in range(7) %}
+              <option value={{day}} {% if day==now.weekday() %}selected{% endif %}
+              >{{days_name[day]}}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </form>
+      <button type="submit" form="form" form>Submit</button>
+    </article>
+
+  </main>
+{% endblock %}
