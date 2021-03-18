@@ -1,11 +1,14 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
+# import modules
 
+# create database
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
 
+# Initialise the server
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'ndozhze f'
