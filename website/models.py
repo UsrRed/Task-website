@@ -2,6 +2,7 @@ from . import db
 from sqlalchemy.sql import func
 
 
+# Creating different type of tasks and her conditions/caracteristics
 class Tskrepet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_now = db.Column(db.DateTime(timezone=True), default=func.now())
