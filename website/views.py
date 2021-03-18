@@ -11,6 +11,7 @@ month_name = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", 
               "Octobre", "Novembre", "Décembre"]
 
 
+# home page
 @views.route('/', methods=['GET', 'POST'])
 def home():
     # Checker if the task is passed
@@ -20,8 +21,10 @@ def home():
     for Rdv in db.session.query(TRdv):
         if int((Rdv.date - dt.datetime.now()).total_seconds()) < 0:
             db.session.query(TRdv).filter_by(id=Rdv.id).delete()
-
+    
+    # When the client ask for the page
     if request.method == 'POST':
+        # refresh the state of tasks (done or not) 
         db.session.query(Tasks).update({"state": False})
         db.session.query(TRdv).update({"state": False})
         db.session.query(Tskrepet).update({"state": False})
@@ -60,7 +63,8 @@ def delete():
                 db.session.query(Tskrepet).filter_by(id=his_id).update({"to_delete": True})
             if his_type == "Rdv":
                 db.session.query(TRdv).filter_by(id=his_id).update({"to_delete": True})
-
+        
+        # delete tasks that the client select
         db.session.query(Tasks).filter_by(to_delete=True).delete()
         db.session.query(TRdv).filter_by(to_delete=True).delete()
         db.session.query(Tskrepet).filter_by(to_delete=True).delete()
